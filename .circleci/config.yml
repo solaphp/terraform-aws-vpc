@@ -2,7 +2,7 @@ version: 2
 
 terraform: &terraform
   docker:
-    - image: hashicorp/terraform:0.12.6
+    - image: docker.mirror.hashicorp.services/hashicorp/terraform:0.12.6
   working_directory: /tmp/workspace/terraform
 
 jobs:
@@ -10,9 +10,9 @@ jobs:
     <<: *terraform
     steps:
       - checkout
-#      - run:
-#          name: Add github.com to ~/.ssh/known_hosts
-#          command: mkdir ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      #      - run:
+      #          name: Add github.com to ~/.ssh/known_hosts
+      #          command: mkdir ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
       - run:
           name: terraform init
           command: find . -type f -name "*.tf" -exec dirname {} \;|sort -u | while read m; do (cd "$m" && terraform init -input=false -backend=false) || exit 1; done
@@ -20,7 +20,7 @@ jobs:
           name: Validate Terraform configurations
           command: find . -name ".terraform" -prune -o -type f -name "*.tf" -exec dirname {} \;|sort -u | while read m; do (cd "$m" && terraform validate && echo "√ $m") || exit 1 ; done
           environment:
-              AWS_DEFAULT_REGION: us-east-1
+            AWS_DEFAULT_REGION: us-east-1
       - run:
           name: Check if Terraform configurations are properly formatted
           command: if [[ -n "$(terraform fmt -write=false)" ]]; then echo "Some terraform files need be formatted, run 'terraform fmt' to fix"; exit 1; fi
