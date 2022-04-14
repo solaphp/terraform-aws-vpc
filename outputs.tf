@@ -29,7 +29,7 @@ output "default_route_table_id" {
 }
 
 output "vpc_instance_tenancy" {
-  description = "Tenancy of instances spin up within VPC"
+  description = "I am Tenancy of instances spin up within VPC"
   value       = concat(aws_vpc.this.*.instance_tenancy, [""])[0]
 }
 
